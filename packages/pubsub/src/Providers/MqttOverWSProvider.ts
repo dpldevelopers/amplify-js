@@ -273,9 +273,14 @@ export class MqttOverWSProvider extends AbstractPubSubProvider {
 				if (client) {
 					this._clientIdObservers.get(clientId).delete(observer);
 					// No more observers per client => client not needed anymore
-					if (this._clientIdObservers.get(clientId).size === 0) {
-						this.disconnect(clientId);
-						this._clientIdObservers.delete(clientId);
+
+					try {
+						if (this._clientIdObservers.get(clientId).size === 0) {
+							this.disconnect(clientId);
+							this._clientIdObservers.delete(clientId);
+						}
+					} catch (err) {
+						console.warn('MqttOverWSProvider.ts error clientID');
 					}
 
 					targetTopics.forEach(topic => {
